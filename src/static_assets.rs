@@ -4,7 +4,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use bevy_app::{App, Plugin};
-use bevy_defer::{AsyncAccess, AsyncWorld};
+use bevy_defer::AsyncWorld;
 use bevy_derive::{Deref, DerefMut};
 use bevy_ecs::prelude::*;
 use bevy_log::error;

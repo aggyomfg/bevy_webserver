@@ -119,9 +119,9 @@ impl From<bevy_defer::AccessError> for WebServerError {
                 resource_type: "entity".to_string(),
                 details: format!("entity {:?} not found", entity),
             },
-            AccessError::QueryConditionNotMet(entity) => Self::ResourceExhausted {
+            AccessError::QueryConditionNotMet { entity, query } => Self::ResourceExhausted {
                 resource_type: "query".to_string(),
-                details: format!("query condition not met for entity {:?}", entity),
+                details: format!("query condition not met for entity {:?}: {}", entity, query),
             },
             AccessError::NoEntityFound { query } => Self::ResourceExhausted {
                 resource_type: "entity".to_string(),

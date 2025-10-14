@@ -17,8 +17,8 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_webgate = "0.1.0"
-bevy = "0.16.1"
+bevy_webgate = "0.2.0"
+bevy = "0.17"
 axum = "0.8.1"
 ```
 
@@ -169,6 +169,13 @@ async fn player_list() -> axum::response::Html<String> {
     axum::response::Html(markup.into_string())
 }
 ```
+
+## Versions
+
+| bevy | bevy_webgate |
+|------|--------------|
+| 0.16 | 0.1          |
+| 0.17 | 0.2          |
 
 ## Examples
 

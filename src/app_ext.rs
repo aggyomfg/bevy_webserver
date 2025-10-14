@@ -22,7 +22,7 @@ use crate::{
 ///
 /// ```rust
 /// use bevy::prelude::*;
-/// use bevy_webserver::{WebServerAppExt, BevyWebServerPlugin};
+/// use bevy_webgate::{WebServerAppExt, BevyWebServerPlugin};
 /// use axum::routing::get;
 ///
 /// let mut app = App::new();
@@ -264,7 +264,7 @@ impl WebServerAppExt for App {
 ///
 /// ```rust
 /// use bevy::prelude::*;
-/// use bevy_webserver::{RouterAppExt, BevyWebServerPlugin};
+/// use bevy_webgate::{RouterAppExt, BevyWebServerPlugin};
 /// use axum::routing::get;
 ///
 /// let mut app = App::new();

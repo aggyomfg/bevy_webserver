@@ -6,7 +6,7 @@ use axum::{
     Json,
 };
 use bevy::prelude::*;
-use bevy_defer::{AsyncAccess, AsyncWorld};
+use bevy_defer::AsyncWorld;
 use bevy_webgate::{serve_file, HttpErrorResponses, RouterAppExt, WebServerConfig};
 use serde_json::{json, Value};
 use std::net::{IpAddr, Ipv4Addr};

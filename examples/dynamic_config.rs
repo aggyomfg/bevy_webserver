@@ -59,7 +59,7 @@ fn dynamic_reconfigure_servers(
     mut server_state: ResMut<ServerState>,
     async_executor: NonSend<AsyncExecutor>,
 ) {
-    if timer.0.tick(time.delta()).finished() {
+    if timer.0.tick(time.delta()).is_finished() {
         if server_state.enabled {
             manager.stop_server(&8080);
             manager.remove_server(&8081);

@@ -1,6 +1,6 @@
 use async_io::Async;
 use axum::Router;
-use bevy_defer::{AccessResult, AsyncAccess, AsyncCommandsExtension, AsyncExecutor, AsyncWorld};
+use bevy_defer::{AccessResult, AsyncCommandsExtension, AsyncExecutor, AsyncWorld};
 use bevy_ecs::prelude::*;
 use bevy_log::{debug, error, info, warn};
 use std::{

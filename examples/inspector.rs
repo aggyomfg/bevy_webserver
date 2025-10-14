@@ -81,7 +81,7 @@ async fn update_component_field(
     Json(update): Json<FieldUpdate>,
 ) -> Html<String> {
     AsyncWorld.run(|world| {
-        let entity = Entity::from_raw(entity_index);
+        let entity = Entity::from_raw_u32(entity_index).unwrap_or(Entity::PLACEHOLDER);
 
         // Get type registry for reflection
         let type_registry = world.resource::<AppTypeRegistry>().clone();
@@ -300,7 +300,8 @@ fn render_component(
     world: &World, // Add world parameter
     _component_name: &str,
 ) -> Markup {
-    let (_, name) = component_info.name().rsplit_once("::").unwrap();
+    let binding = component_info.name();
+    let (_, name) = binding.rsplit_once("::").unwrap();
     let type_info = component_info
         .type_id()
         .and_then(|type_id| type_registry.get_type_info(type_id));
@@ -350,7 +351,7 @@ fn render_component_list(entity: Entity, world: &World) -> Markup {
                     &type_registry,
                     entity,
                     world,  // Pass world to render_component
-                    component_info.name()
+                    &component_info.name()
                 ))
             }
         }
@@ -469,7 +470,7 @@ fn get_named_entities(world: &mut World) -> Vec<(Entity, Option<String>)> {
                 let type_register = type_registry.clone();
                 let type_register = type_register.read();
                 type_register
-                    .get_type_info(info.clone().type_id().unwrap())
+                    .get_type_info(info.type_id().unwrap())
                     .is_some()
             })
             .next()
@@ -504,7 +505,7 @@ fn get_component_count(world: &World, entity: Entity) -> usize {
             let type_registry = type_registry.clone();
             let type_registry = type_registry.read();
             type_registry
-                .get_type_info(info.clone().type_id().unwrap())
+                .get_type_info(info.type_id().unwrap())
                 .is_some()
         })
         .count()
@@ -515,7 +516,7 @@ async fn select_entity(
 ) -> Html<String> {
     AsyncWorld.run(|world| {
         // Create entity from index and update selected entity
-        let entity = Entity::from_raw(entity_index);
+        let entity = Entity::from_raw_u32(entity_index).unwrap_or(Entity::PLACEHOLDER);
         if world.get_entity(entity).is_ok() {
             world.resource_mut::<SelectedEntity>().0 = Some(entity);
         }
