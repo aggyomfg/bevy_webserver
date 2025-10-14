@@ -1,15 +1,15 @@
 [package]
 name = "bevy_webgate"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = [
-    "Malek <pocmalek@gmail.com>",
     "Mikhail Ziablitskii <aggyomfg@yandex.com>",
+    "Malek <pocmalek@gmail.com>",
 ]
 description = "A web server integration for the Bevy game engine that allows you to easily append a webserver to Bevy."
 readme = "README.md"
-repository = "https://github.com/MalekiRe/bevy_webserver"
+repository = "https://github.com/aggyomfg/bevy_webgate"
 
 [dependencies]
 bevy_app = "0.17"
