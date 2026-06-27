@@ -264,17 +264,17 @@ impl WebServer {
                 };
 
                 let ip = server.ip();
-                let port = server.port();
+                let server_port = server.port();
                 let router = server.router().clone();
 
-                Ok::<_, AccessError>((ip, port, router))
+                Ok::<_, AccessError>((ip, server_port, router))
             })
-            .map_err(|e| WebServerError::from(e))??)
+            .map_err(WebServerError::from)??)
     }
 
     async fn listen_accept_loop(ip: IpAddr, port: WebPort, router: Router) -> WebServerResult<()> {
         let async_executor = AsyncWorld
-            .non_send_resource::<AsyncExecutor>()
+            .non_send::<AsyncExecutor>()
             .get(|executor| executor.clone())?;
 
         let listener = Async::<TcpListener>::bind((ip, port)).map_err(|e| {
@@ -333,8 +333,6 @@ impl WebServer {
                     // Connection handling task
                     let connection_task = async_executor.spawn_task({
                         let service = service.clone();
-
-                        let port = port;
 
                         async move {
                             let start_time = Instant::now();

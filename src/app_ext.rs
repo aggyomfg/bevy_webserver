@@ -36,7 +36,6 @@ use crate::{
 /// // Custom IP binding
 /// app.add_server("127.0.0.1".parse().unwrap(), 8083);
 /// ```
-
 pub trait WebServerAppExt {
     /// Add a server on specific IP and port
     fn add_server(&mut self, ip: IpAddr, port: WebPort) -> &mut Self;
@@ -174,7 +173,7 @@ impl WebServerAppExt for App {
                 let existing_router = manager
                     .get_server(&port)
                     .map(|srv| srv.router().clone())
-                    .unwrap_or_else(|| Router::new());
+                    .unwrap_or_default();
 
                 let new_router = router_fn(existing_router);
                 if !manager.has_server(&port) {
@@ -343,7 +342,7 @@ impl RouterAppExt for App {
                 let existing_router = manager
                     .get_server(&default_port)
                     .map(|srv| srv.router().clone())
-                    .unwrap_or_else(|| Router::new());
+                    .unwrap_or_default();
 
                 let new_router = router_fn(existing_router);
                 manager.set_router(&default_port, new_router);

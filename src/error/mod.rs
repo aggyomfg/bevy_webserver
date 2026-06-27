@@ -111,10 +111,6 @@ impl From<bevy_defer::AccessError> for WebServerError {
         use bevy_defer::AccessError;
 
         match error {
-            AccessError::ChannelClosed => Self::IoError {
-                operation: "async channel access".to_string(),
-                source: std::io::Error::new(std::io::ErrorKind::BrokenPipe, "async channel closed"),
-            },
             AccessError::EntityNotFound(entity) => Self::ResourceExhausted {
                 resource_type: "entity".to_string(),
                 details: format!("entity {:?} not found", entity),
@@ -135,9 +131,21 @@ impl From<bevy_defer::AccessError> for WebServerError {
                 resource_type: "child".to_string(),
                 details: format!("child index {} missing", index),
             },
-            AccessError::ComponentNotFound { name } => Self::ResourceExhausted {
+            AccessError::NamedChildNotFound => Self::ResourceExhausted {
+                resource_type: "child".to_string(),
+                details: "named child missing".to_string(),
+            },
+            AccessError::TypedChildNotFound { query } => Self::ResourceExhausted {
+                resource_type: "child".to_string(),
+                details: format!("child of type query {} missing", query),
+            },
+            AccessError::TypedParentNotFound { query } => Self::ResourceExhausted {
+                resource_type: "parent".to_string(),
+                details: format!("parent of type query {} missing", query),
+            },
+            AccessError::ComponentNotFound { entity, name } => Self::ResourceExhausted {
                 resource_type: "component".to_string(),
-                details: format!("component <{}> not found", name),
+                details: format!("component <{}> not found on entity {:?}", name, entity),
             },
             AccessError::ResourceNotFound { name } => Self::ResourceExhausted {
                 resource_type: "resource".to_string(),
@@ -151,54 +159,46 @@ impl From<bevy_defer::AccessError> for WebServerError {
                 field: "event_registration".to_string(),
                 reason: format!("event <{}> not registered", name),
             },
-            AccessError::SignalNotFound { name } => Self::ResourceExhausted {
-                resource_type: "signal".to_string(),
-                details: format!("signal <{}> not found", name),
+            AccessError::DowncastFailed { name } => Self::ConfigError {
+                field: "downcast".to_string(),
+                reason: format!("downcasting {} failed", name),
             },
             AccessError::ScheduleNotFound => Self::ResourceExhausted {
                 resource_type: "schedule".to_string(),
                 details: "schedule not found".to_string(),
             },
-            AccessError::SystemParamError => Self::ConfigError {
-                field: "system_param".to_string(),
-                reason: "system param error".to_string(),
-            },
-            AccessError::WorldParamNotFound => Self::ResourceExhausted {
-                resource_type: "world_param".to_string(),
-                details: "AsyncWorldParam not found".to_string(),
-            },
             AccessError::SystemIdNotFound => Self::ResourceExhausted {
                 resource_type: "system_id".to_string(),
                 details: "SystemId not found".to_string(),
             },
-            AccessError::TaskPanicked => Self::IoError {
-                operation: "task execution".to_string(),
-                source: std::io::Error::new(std::io::ErrorKind::Other, "task spawned has panicked"),
-            },
-            AccessError::NameNotFound => Self::ResourceExhausted {
-                resource_type: "name".to_string(),
-                details: "name not found".to_string(),
-            },
-            AccessError::NotInState => Self::ConfigError {
+            AccessError::NotInState { ty } => Self::ConfigError {
                 field: "state".to_string(),
-                reason: "not in state".to_string(),
-            },
-            AccessError::IO => Self::IoError {
-                operation: "bevy_defer io operation".to_string(),
-                source: std::io::Error::new(std::io::ErrorKind::Other, "io error"),
+                reason: format!("not in state of type {}", ty),
             },
             AccessError::Custom(msg) => Self::ConfigError {
                 field: "custom".to_string(),
                 reason: msg.to_string(),
             },
-            AccessError::ShouldNotHappen => Self::ConfigError {
-                field: "internal".to_string(),
-                reason: "this error should not happen".to_string(),
+            AccessError::TypedError { message, ty } => Self::ConfigError {
+                field: ty.to_string(),
+                reason: message.to_string(),
             },
-            _ => Self::ConfigError {
-                field: "unknown".to_string(),
-                reason: format!("unknown bevy_defer access error: {}", error),
-            },
+            AccessError::ShouldNotHappen => {
+                bevy_log::error!("bevy_defer reported an invariant violation: {error}");
+                Self::ConfigError {
+                    field: "bevy_defer".to_string(),
+                    reason: error.to_string(),
+                }
+            }
+            _ => {
+                bevy_log::error!(
+                    "unhandled non-exhaustive bevy_defer::AccessError variant: {error:?}"
+                );
+                Self::ConfigError {
+                    field: "bevy_defer::AccessError".to_string(),
+                    reason: format!("unhandled non-exhaustive AccessError variant: {error}"),
+                }
+            }
         }
     }
 }
