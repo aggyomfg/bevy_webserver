@@ -9,7 +9,8 @@ use bevy::ecs::component::ComponentInfo;
 use bevy::ecs::entity::Entities;
 use bevy::prelude::*;
 use bevy::reflect::{
-    EnumInfo, ReflectFromPtr, StructInfo, TupleStructInfo, TypeInfo, TypeRegistry,
+    enums::EnumInfo, structs::StructInfo, tuple_struct::TupleStructInfo, ReflectFromPtr, TypeInfo,
+    TypeRegistry,
 };
 use bevy_defer::AsyncWorld;
 use bevy_webgate::prelude::*;
